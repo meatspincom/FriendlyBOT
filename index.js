@@ -106,7 +106,7 @@ const parseFunc = () => {
       if (res.data.streams.length === 0) {
         //
       } else {
-        Rank.parseFunc();
+        Rank.parseChatters();
       }
     })
     .catch(err => {
