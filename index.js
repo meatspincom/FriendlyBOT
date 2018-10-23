@@ -104,12 +104,9 @@ const parseFunc = () => {
     )
     .then(res => {
       if (res.data.streams.length === 0) {
-        parseActive = false;
-        clearInterval(parse);
+        //
       } else {
-        if (parseActive === false) {
-          parse = setInterval(() => Rank.parseChatters(), 60000);
-        }
+        Rank.parseFunc();
       }
     })
     .catch(err => {
@@ -372,7 +369,5 @@ mongoose
   .then(() => {
     Rank.parseChatters();
     client.connect();
-    parse = setInterval(() => Rank.parseChatters(), 60000);
+    setInterval(() => parseFunc(), 60000);
   });
-
-setInterval(() => parseFunc(), 60000);
