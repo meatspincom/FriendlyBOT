@@ -12,5 +12,5 @@ module.exports = {
   // Канал, на который писать сообщения
   channel: 'friendlyfang',
   // Пользователи, которые будут управлять ставками (обязательно писать весь ник низкими символами, через запятую в квадратных скобках)
-  moders: ['cardinalasassin', 'friendlyfang']
+  moders: ['cardinalasassin', 'friendlyfang'],
 };

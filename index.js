@@ -50,18 +50,18 @@ socket.on('betInfo', betInfo => {
                 { username: user.username },
                 {
                   coins:
-                    user.coins + parseFloat(winners[user.username].sum) * 1.1
+                    user.coins + parseFloat(winners[user.username].sum) * 1.1,
                 },
-                (err, res) => {}
+                (err, res) => {},
               );
             } else if (betInfo.side === 'lose') {
               User.updateUser(
                 { username: user.username },
                 {
                   coins:
-                    user.coins + parseFloat(winners[user.username].sum) * 10
+                    user.coins + parseFloat(winners[user.username].sum) * 10,
                 },
-                (err, res) => {}
+                (err, res) => {},
               );
             }
           });
@@ -71,7 +71,7 @@ socket.on('betInfo', betInfo => {
         }, 2500);
         client.say(
           CONFIG.channel,
-          'Игра окончена, победителям были начислены призы'
+          'Игра окончена, победителям были начислены призы',
         );
       });
 
@@ -89,8 +89,8 @@ const getWallet = senderData => {
     client.say(
       CONFIG.channel,
       `В кошельке ${senderData.username} ${(data[0].coins / 100).toFixed(
-        2
-      )} монет`
+        2,
+      )} монет`,
     );
   });
 };
@@ -100,7 +100,7 @@ const parseFunc = () => {
     .get(
       `https://api.twitch.tv/kraken/streams/?channel=${
         CONFIG.channel
-      }&client_id=${botConfig.clientId}`
+      }&client_id=${botConfig.clientId}`,
     )
     .then(res => {
       if (res.data.streams.length === 0) {
@@ -139,7 +139,7 @@ const checkTrack = items => {
   ) {
     client.say(
       CONFIG.channel,
-      `Видео длится больше ${CONFIG.maxTrackLength} минут`
+      `Видео длится больше ${CONFIG.maxTrackLength} минут`,
     );
     return false;
   } else if (items[0].snippet.liveBroadcastContent === 'live') {
@@ -154,8 +154,8 @@ const addTrack = (message, senderData) => {
   axios
     .get(
       `https://www.googleapis.com/youtube/v3/search?part=snippet&videoCategoryId=10&type=video&q=${encodeURIComponent(
-        message.slice(3)
-      )}&maxResults=1&key=${botConfig.youtubeKey}`
+        message.slice(3),
+      )}&maxResults=1&key=${botConfig.youtubeKey}`,
     )
     .then(res => {
       const username = senderData.username;
@@ -168,11 +168,11 @@ const addTrack = (message, senderData) => {
             res.data.items[0].id.videoId
           }&key=${
             botConfig.youtubeKey
-          }&part=contentDetails%2Cstatistics%2Csnippet`
+          }&part=contentDetails%2Cstatistics%2Csnippet`,
         )
         .then(res => {
           const duration = iso.toSeconds(
-            iso.parse(res.data.items[0].contentDetails.duration)
+            iso.parse(res.data.items[0].contentDetails.duration),
           );
           if (checkTrack(res.data.items)) {
             User.getUser({ username: username }, (err, data) => {
@@ -187,7 +187,7 @@ const addTrack = (message, senderData) => {
                   duration * CONFIG.pricePerSecond,
                   id,
                   title,
-                  author
+                  author,
                 );
               }
             });
@@ -202,9 +202,9 @@ const onAddTrack = (data, username, price, id, title, author) => {
     {
       coins: data[0].coins - price,
       totalxp: data[0].totalxp,
-      lastOnline: Date.now()
+      lastOnline: Date.now(),
     },
-    (err, data) => {}
+    (err, data) => {},
   );
   Music.insertMusic(
     {
@@ -212,7 +212,7 @@ const onAddTrack = (data, username, price, id, title, author) => {
       id: id,
       title: title,
       author: author,
-      date: Date.now()
+      date: Date.now(),
     },
     (err, data) => {
       socket.emit('addTrack', {
@@ -221,9 +221,9 @@ const onAddTrack = (data, username, price, id, title, author) => {
         id: id,
         title: title,
         author: author,
-        date: Date.now()
+        date: Date.now(),
       });
-    }
+    },
   );
   client.say(CONFIG.channel, 'Трек добавлен в очередь');
 };
@@ -250,39 +250,39 @@ const bet = (side, message, senderData) => {
         return false;
       } else {
         if (parseFloat(message.slice(5) * 100).toFixed(2) === 'NaN') {
-          client.say(CONFIG.channel, 'Неверная сумма ставки');
+          client.whisper(username, 'Неверная сумма ставки');
         } else if (
           data[0].coins < parseFloat(message.slice(5) * 100).toFixed(2)
         ) {
-          client.say(CONFIG.channel, 'Недостаточно денег');
+          client.whisper(username, 'Недостаточно денег');
         } else {
           User.updateUser(
             { username },
             {
               coins: data[0].coins - parseFloat(message.slice(5) * 100),
               totalxp: data[0].totalxp,
-              lastOnline: Date.now()
+              lastOnline: Date.now(),
             },
             (err, res) => {
               console.log('Новая ставка!');
-            }
+            },
           );
           Bet.insertBet({
             username,
             side,
-            sum: parseFloat(message.slice(5) * 100)
+            sum: parseFloat(message.slice(5) * 100),
           });
           socket.emit('bet', {
             username,
             side,
-            sum: parseFloat(message.slice(5) * 100)
+            sum: parseFloat(message.slice(5) * 100),
           });
-          client.say(CONFIG.channel, 'Ваша ставка принята');
+          client.whisper(username, 'Ваша ставка принята');
         }
       }
     });
   } else {
-    client.say(CONFIG.channel, 'Прием ставок закрыт');
+    client.whisper(username, 'Прием ставок закрыт');
   }
 };
 
@@ -321,6 +321,14 @@ const moderAction = action => {
   }
 };
 
+const roll = senderData => {
+  const { username } = senderData;
+  client.say(
+    CONFIG.channel,
+    `${username} выпало число ${(Math.random() * 100).toFixed(0)}`,
+  );
+};
+
 client.on('chat', (useless, senderData, message) => {
   Rank.addXpForMsg(senderData.username);
   const lowMessage = message.toLowerCase();
@@ -349,22 +357,25 @@ client.on('chat', (useless, senderData, message) => {
       moderAction('closeBet');
     }
   }
-  if (lowMessage === '!w') {
+  if (lowMessage === '!w' || lowMessage === '!ц') {
     if (CONFIG.moders.includes(senderData.username.toLowerCase())) {
       moderAction('winBet');
     }
   }
-  if (lowMessage === '!l') {
+  if (lowMessage === '!l' || lowMessage === '!д') {
     if (CONFIG.moders.includes(senderData.username.toLowerCase())) {
       moderAction('loseBet');
     }
+  }
+  if (lowMessage.startsWith('!roll') || lowMessage.startsWith('!кщдд')) {
+    roll(senderData);
   }
 });
 
 mongoose
   .connect(
     db.link,
-    { useNewUrlParser: true }
+    { useNewUrlParser: true },
   )
   .then(() => {
     Rank.parseChatters();
