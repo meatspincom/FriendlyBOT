@@ -240,7 +240,7 @@ const currentTrack = () => {
 
 const bet = (side, message, senderData) => {
   const username = senderData.username;
-  if (betAllow === true) {
+  if (betAllow !== true) {
     if (parseFloat(message.slice(5) * 100).toFixed(2) < CONFIG.minBet) {
       client.whisper(username, `Сумма ставки меньше ${CONFIG.minBet / 100}`);
       return;
@@ -260,8 +260,8 @@ const bet = (side, message, senderData) => {
         ) {
           client.whisper(username, 'Недостаточно денег');
         } else {
-          Bet.findBet({ username: username }, (err, data) => {
-            if (data.length > 0) {
+          Bet.findBet({ username: username }, (err, betdata) => {
+            if (betdata.length === 0) {
               User.updateUser(
                 { username },
                 {
