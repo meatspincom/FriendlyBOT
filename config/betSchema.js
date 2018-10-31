@@ -23,7 +23,6 @@ module.exports.insertBet = (data, callback) => {
 module.exports.findBet = (data, callback) => {
   Bet.find(data, callback);
 };
-modul;
 module.exports.findBets = callback => {
   Bet.find(callback);
 };
