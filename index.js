@@ -260,7 +260,7 @@ const bet = (side, message, senderData) => {
         ) {
           client.whisper(username, 'Недостаточно денег');
         } else {
-          Bet.findBets({ username: username }, (err, data) => {
+          Bet.findBet({ username: username }, (err, data) => {
             if (data.length > 0) {
               User.updateUser(
                 { username },
