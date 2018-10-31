@@ -240,7 +240,7 @@ const currentTrack = () => {
 
 const bet = (side, message, senderData) => {
   const username = senderData.username;
-  if (betAllow !== true) {
+  if (betAllow === true) {
     if (parseFloat(message.slice(5) * 100).toFixed(2) < CONFIG.minBet) {
       client.whisper(username, `Сумма ставки меньше ${CONFIG.minBet / 100}`);
       return;
