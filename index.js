@@ -260,28 +260,34 @@ const bet = (side, message, senderData) => {
         ) {
           client.whisper(username, 'Недостаточно денег');
         } else {
-          User.updateUser(
-            { username },
-            {
-              coins: data[0].coins - parseFloat(message.slice(5) * 100),
-              totalxp: data[0].totalxp,
-              lastOnline: Date.now(),
-            },
-            (err, res) => {
-              console.log('Новая ставка!');
-            },
-          );
-          Bet.insertBet({
-            username,
-            side,
-            sum: parseFloat(message.slice(5) * 100),
+          Bet.findBets({ username: username }, (err, data) => {
+            if (data.length > 0) {
+              User.updateUser(
+                { username },
+                {
+                  coins: data[0].coins - parseFloat(message.slice(5) * 100),
+                  totalxp: data[0].totalxp,
+                  lastOnline: Date.now(),
+                },
+                (err, res) => {
+                  console.log('Новая ставка!');
+                },
+              );
+              Bet.insertBet({
+                username,
+                side,
+                sum: parseFloat(message.slice(5) * 100),
+              });
+              socket.emit('bet', {
+                username,
+                side,
+                sum: parseFloat(message.slice(5) * 100),
+              });
+              client.whisper(username, 'Ваша ставка принята');
+            } else {
+              client.whisper(username, 'Вы уже сделали ставку на эту игру');
+            }
           });
-          socket.emit('bet', {
-            username,
-            side,
-            sum: parseFloat(message.slice(5) * 100),
-          });
-          client.whisper(username, 'Ваша ставка принята');
         }
       }
     });
