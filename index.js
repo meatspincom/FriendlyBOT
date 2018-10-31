@@ -242,11 +242,11 @@ const bet = (side, message, senderData) => {
   const username = senderData.username;
   if (betAllow === true) {
     if (parseFloat(message.slice(5) * 100).toFixed(2) < CONFIG.minBet) {
-      client.say(CONFIG.channel, `Сумма ставки меньше ${CONFIG.minBet / 100}`);
+      client.whisper(username, `Сумма ставки меньше ${CONFIG.minBet / 100}`);
       return;
     }
     if (parseFloat(message.slice(5) * 100).toFixed(2) > CONFIG.maxBet) {
-      client.say(CONFIG.channel, `Сумма ставки больше ${CONFIG.maxBet / 100}`);
+      client.whisper(username, `Сумма ставки больше ${CONFIG.maxBet / 100}`);
       return;
     }
     User.getUser({ username: username }, (err, data) => {
